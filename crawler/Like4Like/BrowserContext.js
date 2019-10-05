@@ -101,7 +101,7 @@ function BrowserContext()
       // Debug
       console.warn(`${step}: ${locStr}`);
       // @var {Object} obj Crawl object data
-      var { inputData } = await _pptCall();
+      var { configData } = await _pptCall();
       //
       _ppt.stepHandled = step.trim();
       _pptCall({ crawl_obj: { urlLogin: locStr } });
@@ -113,8 +113,8 @@ function BrowserContext()
             var $formLogin = $('#login');
             // Case: login?
             if ($formLogin.length) {
-              $('#username').val('khanhdtp');
-              $('#password').val('HdAbwx1JY3MLe');
+              $('#username').val(configData.username);
+              $('#password').val(configData.password);
               $formLogin.find('a.form-button').get(0).click();
               return;
             }
@@ -173,6 +173,8 @@ function BrowserContext()
                 return callback($likeButtons);
               }
               // TODO: config time
+			  var loadMoreLinks = $('#load-more-links').get(0);
+			  loadMoreLinks && loadMoreLinks.click();
               setTimeout(() => { loadLinks(callback); }, 5e3);
             }
             async function doLike($likeButton) {
@@ -180,7 +182,7 @@ function BrowserContext()
                 var likeBtn = $likeButton.get(0);
                 likeBtn && likeBtn.click();
                 // @TODO: config time
-                setTimeout(resolve, 60e3);
+                setTimeout(resolve, 45e3);
               });
             }
             async function doLikeButtons($likeButtons) {
@@ -234,19 +236,19 @@ function BrowserContext()
           // Like button by post (PC)
           likeButton || (likeButton = document.querySelector('a[data-testid="UFI2ReactionLink"] i.img'));
           // Like button by post (SP)
-          likeButton || (likeButton = document.querySelector('a[role="button"][data-sigil~="touchable"]'));
           if (!likeButton) {
             var likeButtonWrap = document.querySelector('div[role="button"][aria-label][data-nt]');
             var likeButtonInner = likeButtonWrap && likeButtonWrap.querySelector('* > div');
             likeButton = likeButtonInner && likeButtonInner.querySelector('* > div:first-child');
           }
+		  likeButton || (likeButton = document.querySelector('a[role="button"][data-sigil~="touchable"]'));
           // Trigger
           likeButton && _ppt.triggerClick(likeButton);
           if (!likeButton) {
             _pptCLog(`NO likeButton: ${locStr}.`);
           }
           // @TODO: 
-          setTimeout(() => { window.close() }, 5e3);
+          setTimeout(() => { window.close() }, 1e3);
         } catch (error) {
           err = `Load 'likeOnFacebook' page has failed (${error.message}).`;
           alert(err);
